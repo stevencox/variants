@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+jq '.["phenotypes"]' rs*_phenotype.json | grep -v '\[\]'
+

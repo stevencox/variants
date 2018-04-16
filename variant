@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -x
+
+wget --quiet -O- "http://rest.ensembl.org/overlap/id/ENSG00000136869?feature=variation;content-type=application/json" | jq . >  TLR4_variants.json
+for v in $(grep -i rs TLR4_variants.json | sed -e s,\",,g -e s/,//g -e s,id:,, -e "s, ,,g"); do
+    echo processing variant $v
+    wget --quiet -O- "http://rest.ensembl.org/variation/human/${v}?content-type=application/json;phenotypes=1" | jq . > ${v}_phenotype.json
+    wget --quiet -O- "http://rest.ensembl.org/variation/human/${v}?content-type=application/json;genotypes=1" | jq . >  ${v}_genotype.json
+    wget --quiet -O- "http://myvariant.info/v1/variant/${v}" | jq . > ${v}.info
+done 
